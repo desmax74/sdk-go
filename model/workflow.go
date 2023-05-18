@@ -16,6 +16,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // InvokeKind defines how the target is invoked.
@@ -136,6 +137,12 @@ type BaseWorkflow struct {
 	Auth Auths `json:"auth,omitempty" validate:"omitempty"`
 }
 
+func (b BaseWorkflow) String() string {
+	return fmt.Sprintf("[%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %t, %+v, %t, %s]",
+		b.ID, b.Key, b.Name, b.Description, b.Version, b.Start, b.Annotations, b.DataInputSchema, b.SpecVersion, b.Secrets,
+		b.Constants, b.ExpressionLang, b.Timeouts, b.Errors, b.KeepActive, b.Metadata, b.AutoRetries, b.Auth)
+}
+
 type Auths []Auth
 
 type authsUnmarshal Auths
@@ -166,6 +173,10 @@ type Workflow struct {
 	Functions Functions `json:"functions,omitempty"`
 	// +optional
 	Retries Retries `json:"retries,omitempty" validate:"dive"`
+}
+
+func (w Workflow) String() string {
+	return fmt.Sprintf("[%+v, %+v, %+v, %+v]", w.States, w.Events, w.Functions, w.Retries)
 }
 
 type workflowUnmarshal Workflow
@@ -248,6 +259,10 @@ type Timeouts struct {
 	EventTimeout string `json:"eventTimeout,omitempty" validate:"omitempty,min=1"`
 }
 
+func (t Timeouts) String() string {
+	return fmt.Sprintf("[%+v, %+v, %+v, %+v, %s]", t.WorkflowExecTimeout, t.StateExecTimeout, t.ActionExecTimeout, t.BranchExecTimeout, t.EventTimeout)
+}
+
 type timeoutsUnmarshal Timeouts
 
 // UnmarshalJSON implements json.Unmarshaler
@@ -268,6 +283,10 @@ type WorkflowExecTimeout struct {
 	// Name of a workflow state to be executed before workflow instance is terminated.
 	// +optional
 	RunBefore string `json:"runBefore,omitempty" validate:"omitempty,min=1"`
+}
+
+func (w WorkflowExecTimeout) String() string {
+	return fmt.Sprintf("[%s, %t, %s]", w.Duration, w.Interrupt, w.RunBefore)
 }
 
 type workflowExecTimeoutUnmarshal WorkflowExecTimeout
@@ -308,6 +327,10 @@ type Start struct {
 	Schedule *Schedule `json:"schedule,omitempty" validate:"omitempty"`
 }
 
+func (s Start) String() string {
+	return fmt.Sprintf("[%s, %+v]", s.StateName, s.Schedule)
+}
+
 type startUnmarshal Start
 
 // UnmarshalJSON implements json.Unmarshaler
@@ -331,6 +354,10 @@ type Schedule struct {
 	Timezone string `json:"timezone,omitempty"`
 }
 
+func (s Schedule) String() string {
+	return fmt.Sprintf("[%s, %+v, %s]", s.Interval, s.Cron, s.Timezone)
+}
+
 type scheduleUnmarshal Schedule
 
 // UnmarshalJSON implements json.Unmarshaler
@@ -346,6 +373,10 @@ type Cron struct {
 	// Specific date and time (ISO 8601 format) when the cron expression is no longer valid.
 	// +optional
 	ValidUntil string `json:"validUntil,omitempty" validate:"omitempty,iso8601duration"`
+}
+
+func (c Cron) String() string {
+	return fmt.Sprintf("[%s, %s]", c.Expression, c.ValidUntil)
 }
 
 type cronUnmarshal Cron
@@ -368,6 +399,10 @@ type Transition struct {
 	// +kubebuilder:default=false
 	// +optional
 	Compensate bool `json:"compensate,omitempty"`
+}
+
+func (t Transition) String() string {
+	return fmt.Sprintf("[%s, %+v, %t]", t.NextState, t.ProduceEvents, t.Compensate)
 }
 
 type transitionUnmarshal Transition
@@ -478,6 +513,10 @@ type DataInputSchema struct {
 	FailOnValidationErrors bool `json:"failOnValidationErrors" validate:"required"`
 }
 
+func (d DataInputSchema) String() string {
+	return fmt.Sprintf("[%s, %t]", d.Schema, d.FailOnValidationErrors)
+}
+
 type dataInputSchemaUnmarshal DataInputSchema
 
 // UnmarshalJSON implements json.Unmarshaler
@@ -507,6 +546,10 @@ type Constants struct {
 	// Data represents the generic structure of the constants value
 	// +optional
 	Data ConstantsData `json:",omitempty"`
+}
+
+func (d Constants) String() string {
+	return fmt.Sprintf("[%+v]", d.Data)
 }
 
 // UnmarshalJSON implements json.Unmarshaler

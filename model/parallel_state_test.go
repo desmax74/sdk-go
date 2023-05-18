@@ -16,6 +16,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -64,4 +65,25 @@ func TestParallelStateUnmarshalJSON(t *testing.T) {
 			assert.Equal(t, tc.expect, &v)
 		})
 	}
+}
+
+func TestParallelStateToString(t *testing.T) {
+	stateExecTimeout := StateExecTimeout{
+		Single: "single",
+		Total:  "total",
+	}
+
+	timeout := ParallelStateTimeout{
+		StateExecTimeout: &stateExecTimeout,
+	}
+
+	parallelState := ParallelState{
+		CompletionType: CompletionTypeAtLeast,
+		NumCompleted:   intstr.FromInt(25),
+		Branches:       []Branch{},
+		Timeouts:       &timeout,
+	}
+	value := fmt.Sprintf("%s", parallelState)
+	assert.NotNil(t, value)
+	assert.Equal(t, "{ Branches:[], CompletionType:atLeast, NumCompleted:{Type:0 IntVal:25 StrVal:}, Timeouts:{ BranchExecTimeout:, StateExecTimeout:{ Single:single, Total:total} } }", value)
 }

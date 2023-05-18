@@ -16,6 +16,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -69,4 +70,25 @@ func TestOperationStateUnmarshalJSON(t *testing.T) {
 			assert.Equal(t, tc.expect, v)
 		})
 	}
+}
+
+func TestOperationStateToString(t *testing.T) {
+
+	stateExecTimeout := StateExecTimeout{
+		Single: "single",
+		Total:  "total",
+	}
+
+	operationStateTimeouts := OperationStateTimeout{
+		ActionExecTimeout: "actionExecTimout",
+		StateExecTimeout:  &stateExecTimeout,
+	}
+
+	operationState := OperationState{
+		ActionMode: ActionModeSequential,
+		Timeouts:   &operationStateTimeouts,
+	}
+	value := fmt.Sprintf("%s", operationState)
+	assert.NotNil(t, value)
+	assert.Equal(t, "{ ActionMode:sequential, Actions:[], Timeouts:{ ActionMode:{ Single:single, Total:total}, ActionExecTimeout:actionExecTimout } }", value)
 }

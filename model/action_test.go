@@ -16,6 +16,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -153,4 +154,52 @@ func TestFunctionRefUnmarshalJSON(t *testing.T) {
 			assert.Equal(t, tc.expect, v)
 		})
 	}
+}
+
+func TestActionToString(t *testing.T) {
+
+	dataObj := FromString("data")
+
+	eventRef := EventRef{
+		TriggerEventRef:    "triggerEvRef",
+		ResultEventRef:     "resEvRef",
+		ResultEventTimeout: "0",
+		Data:               &dataObj,
+	}
+
+	funcRef := FunctionRef{
+		RefName:      "funcRefName",
+		SelectionSet: "selSet",
+	}
+
+	workFlowRef := WorkflowRef{
+		WorkflowID:       "58",
+		Version:          "0.0.1",
+		Invoke:           "invokeKind",
+		OnParentComplete: "onPComplete",
+	}
+	sleep := Sleep{
+		Before: "PT10S",
+		After:  "PT20S",
+	}
+
+	var retryErrs = []string{"errA", "errB"}
+	var nonRetryErrs = []string{"nErrA", "nErrB"}
+
+	action := Action{
+		ID:                 "46",
+		Name:               "ActionName",
+		FunctionRef:        &funcRef,
+		EventRef:           &eventRef,
+		SubFlowRef:         &workFlowRef,
+		Sleep:              &sleep,
+		RetryableErrors:    retryErrs,
+		NonRetryableErrors: nonRetryErrs,
+	}
+	value := fmt.Sprintf("%s", action)
+	assert.NotNil(t, value)
+	assert.Equal(t, "{ ID:46, Name:ActionName, FunctionRef: &{RefName:funcRefName Arguments:map[] SelectionSet:selSet Invoke:}"+
+		" EventRef: &{TriggerEventRef:triggerEvRef ResultEventRef:resEvRef ResultEventTimeout:0 Data:[1, 0, data, []] ContextAttributes:map[] Invoke:},"+
+		" SubFlowRef:[58, 0.0.1, invokeKind, onPComplete], Sleep:&{Before:PT10S After:PT20S}, RetryRef: , NonRetryableErrors:[nErrA nErrB], "+
+		"RetryableErrors:[errA errB], ActionDataFilter:{FromStateData: UseResults:false Results: ToStateData:}, Condition: }", value)
 }

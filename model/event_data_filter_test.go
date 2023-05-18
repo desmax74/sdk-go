@@ -16,6 +16,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -78,4 +79,16 @@ func TestEventDataFilterUnmarshalJSON(t *testing.T) {
 			assert.Equal(t, tc.expect, v)
 		})
 	}
+}
+
+func TestEventDataFilterToString(t *testing.T) {
+
+	eventDataFilter := EventDataFilter{
+		UseData:     true,
+		Data:        "data",
+		ToStateData: "ToStateData",
+	}
+	value := fmt.Sprintf("%s", eventDataFilter)
+	assert.NotNil(t, value)
+	assert.Equal(t, "[true, data, ToStateData]", value)
 }

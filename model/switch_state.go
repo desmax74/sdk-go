@@ -16,6 +16,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -35,6 +36,10 @@ type SwitchState struct {
 	// SwitchState specific timeouts
 	// +optional
 	Timeouts *SwitchStateTimeout `json:"timeouts,omitempty"`
+}
+
+func (s SwitchState) String() string {
+	return fmt.Sprintf("[%+v, %+v, %+v, %+v]", s.DataConditions, s.EventConditions, s.DefaultCondition, s.Timeouts)
 }
 
 func (s *SwitchState) MarshalJSON() ([]byte, error) {
@@ -67,6 +72,10 @@ type DefaultCondition struct {
 	// +kubebuilder:pruning:PreserveUnknownFields
 	// +optional
 	End *End `json:"end,omitempty"`
+}
+
+func (d DefaultCondition) String() string {
+	return fmt.Sprintf("{ Transition:%+v, End:%+v }", d.Transition, d.End)
 }
 
 type defaultConditionUnmarshal DefaultCondition
