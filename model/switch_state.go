@@ -39,7 +39,7 @@ type SwitchState struct {
 }
 
 func (s SwitchState) String() string {
-	return fmt.Sprintf("[%+v, %+v, %+v, %+v]", s.DataConditions, s.EventConditions, s.DefaultCondition, s.Timeouts)
+	return fmt.Sprintf("{ DataConditions:%+v, EventConditions:%+v, DefaultCondition:%+v, Timeouts:%+v }", s.DataConditions, s.EventConditions, s.DefaultCondition, s.Timeouts)
 }
 
 func (s *SwitchState) MarshalJSON() ([]byte, error) {
@@ -106,6 +106,10 @@ type SwitchStateTimeout struct {
 	EventTimeout string `json:"eventTimeout,omitempty" validate:"omitempty,iso8601duration"`
 }
 
+func (s SwitchStateTimeout) String() string {
+	return fmt.Sprintf("{ StateExecTimeout:%+v, EventTimeout:%+v }", s.StateExecTimeout, s.EventTimeout)
+}
+
 // EventCondition specify events which the switch state must wait for.
 type EventCondition struct {
 	// Event condition name.
@@ -135,6 +139,10 @@ type EventCondition struct {
 	Transition *Transition `json:"transition" validate:"omitempty"`
 }
 
+func (e EventCondition) String() string {
+	return fmt.Sprintf("{ Name:%+v, Transition:%+v, Metadata:%v, End:%v, EventRef:%v, EventDataFilter:%v }", e.Name, e.Transition, e.Metadata, e.End, e.EventRef, e.EventDataFilter)
+}
+
 // DataCondition specify a data-based condition statement which causes a transition to another workflow state
 // if evaluated to true.
 type DataCondition struct {
@@ -152,4 +160,8 @@ type DataCondition struct {
 	End *End `json:"end" validate:"omitempty"`
 	// Workflow transition if condition is evaluated to true
 	Transition *Transition `json:"transition,omitempty" validate:"omitempty"`
+}
+
+func (d DataCondition) String() string {
+	return fmt.Sprintf("{ Name:%+v, Transition:%+v, Condition:%v, Metadata:%v, End:%v }", d.Name, d.Transition, d.Condition, d.Metadata, d.End)
 }

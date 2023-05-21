@@ -63,7 +63,7 @@ type Auth struct {
 }
 
 func (a Auth) String() string {
-	return fmt.Sprintf("[%s, %+v, %+v]",
+	return fmt.Sprintf("{ Name:%s, Scheme:%+v, Properties:%+v}",
 		a.Name, a.Scheme, a.Properties)
 }
 
@@ -131,7 +131,7 @@ type AuthProperties struct {
 }
 
 func (ap AuthProperties) String() string {
-	return fmt.Sprintf("[%+v, %+v, %+v]", ap.Basic, ap.Bearer, ap.OAuth2)
+	return fmt.Sprintf("{ Basic:%+v, Bearer:%+v, OAuth2:%+v }", ap.Basic, ap.Bearer, ap.OAuth2)
 }
 
 // BasicAuthProperties Basic Auth Info

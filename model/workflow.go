@@ -138,7 +138,7 @@ type BaseWorkflow struct {
 }
 
 func (b BaseWorkflow) String() string {
-	return fmt.Sprintf("[%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %t, %+v, %t, %s]",
+	return fmt.Sprintf("{ ID:%+v, Key:%+v, Name:%+v, Description:%+v, Version:%+v, Start:%+v, Annotations:%+v, DataInputSchema:%+v, SpecVersion:%+v, Secrets:%+v, Constants:%+v, ExpressionLang:%+v, Timeouts:%+v, Errors:%+v, KeepActive:%+v, Metadata:%+v, AutoRetries:%+v, Auth:%+v }",
 		b.ID, b.Key, b.Name, b.Description, b.Version, b.Start, b.Annotations, b.DataInputSchema, b.SpecVersion, b.Secrets,
 		b.Constants, b.ExpressionLang, b.Timeouts, b.Errors, b.KeepActive, b.Metadata, b.AutoRetries, b.Auth)
 }
@@ -176,7 +176,7 @@ type Workflow struct {
 }
 
 func (w Workflow) String() string {
-	return fmt.Sprintf("[%+v, %+v, %+v, %+v]", w.States, w.Events, w.Functions, w.Retries)
+	return fmt.Sprintf("{ BaseWorkflow:%+v, States:%+v, Events:%+v, Functions:%+v, Retries:%+v }", w.BaseWorkflow, w.States, w.Events, w.Functions, w.Retries)
 }
 
 type workflowUnmarshal Workflow
@@ -328,7 +328,7 @@ type Start struct {
 }
 
 func (s Start) String() string {
-	return fmt.Sprintf("[%s, %+v]", s.StateName, s.Schedule)
+	return fmt.Sprintf("{ StateName:%s, Schedule:%+v }", s.StateName, s.Schedule)
 }
 
 type startUnmarshal Start
@@ -355,7 +355,7 @@ type Schedule struct {
 }
 
 func (s Schedule) String() string {
-	return fmt.Sprintf("[%s, %+v, %s]", s.Interval, s.Cron, s.Timezone)
+	return fmt.Sprintf("{ Interval:%s, Cron:%+v, Timezone:%s}", s.Interval, s.Cron, s.Timezone)
 }
 
 type scheduleUnmarshal Schedule
@@ -376,7 +376,7 @@ type Cron struct {
 }
 
 func (c Cron) String() string {
-	return fmt.Sprintf("[%s, %s]", c.Expression, c.ValidUntil)
+	return fmt.Sprintf("{ Expression:%s, ValidUntil%s }", c.Expression, c.ValidUntil)
 }
 
 type cronUnmarshal Cron
@@ -432,6 +432,10 @@ type OnError struct {
 	End *End `json:"end,omitempty"`
 }
 
+func (o OnError) String() string {
+	return fmt.Sprintf("{ End:%+v, Transition:%+v, ErrorRef:%+v, ErrorRefs:%+v }", o.End, o.Transition, o.ErrorRef, o.ErrorRefs)
+}
+
 // End definition
 type End struct {
 	// If true, completes all execution flows in the given workflow instance.
@@ -447,6 +451,10 @@ type End struct {
 	// instance of the provided id
 	// +optional
 	ContinueAs *ContinueAs `json:"continueAs,omitempty"`
+}
+
+func (e End) String() string {
+	return fmt.Sprintf("{ Terminate:%+v, ProduceEvents:%+v, Compensate:%+v, ContinueAs:%+v }", e.Terminate, e.ProduceEvents, e.Compensate, e.ContinueAs)
 }
 
 type endUnmarshal End
@@ -474,6 +482,10 @@ type ContinueAs struct {
 	WorkflowExecTimeout WorkflowExecTimeout `json:"workflowExecTimeout,omitempty"`
 }
 
+func (c ContinueAs) String() string {
+	return fmt.Sprintf("{ WorkflowID:%+v, Version:%+v, WorkflowExecTimeout:%+v, Data:%+v }", c.WorkflowID, c.Version, c.WorkflowExecTimeout, c.Data)
+}
+
 type continueAsUnmarshal ContinueAs
 
 // UnmarshalJSON implements json.Unmarshaler
@@ -497,12 +509,20 @@ type ProduceEvent struct {
 	ContextAttributes map[string]string `json:"contextAttributes,omitempty"`
 }
 
+func (p ProduceEvent) String() string {
+	return fmt.Sprintf("{ EventRef:%+v, Data:%+v, ContextAttributes:%+v }", p.EventRef, p.Data, p.ContextAttributes)
+}
+
 // StateDataFilter ...
 type StateDataFilter struct {
 	// Workflow expression to filter the state data input
 	Input string `json:"input,omitempty"`
 	// Workflow expression that filters the state data output
 	Output string `json:"output,omitempty"`
+}
+
+func (s StateDataFilter) String() string {
+	return fmt.Sprintf("{ Input:%+v, Output:%+v }", s.Input, s.Output)
 }
 
 // DataInputSchema Used to validate the workflow data input against a defined JSON Schema
@@ -514,7 +534,7 @@ type DataInputSchema struct {
 }
 
 func (d DataInputSchema) String() string {
-	return fmt.Sprintf("[%s, %t]", d.Schema, d.FailOnValidationErrors)
+	return fmt.Sprintf("{ Schema:%s, FailOnValidationErrors:%t }", d.Schema, d.FailOnValidationErrors)
 }
 
 type dataInputSchemaUnmarshal DataInputSchema

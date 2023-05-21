@@ -153,9 +153,10 @@ type State struct {
 }
 
 func (s State) String() string {
-	return fmt.Sprintf("[%s, %s, %s, %s, %s, %s, %s, %s, %s, %s]",
+	return fmt.Sprintf("{ BaseState:%+v, DelayState:%+v, EventState:%+v, OperationState:%+v, ParallelState:%+v, SwitchState:%+v, ForEachState:%+v, InjectState:%+v, CallbackState:%+v, SleepState:%+v }",
 		s.BaseState, s.DelayState, s.EventState, s.OperationState, s.ParallelState,
 		s.SwitchState, s.ForEachState, s.InjectState, s.CallbackState, s.SleepState)
+
 }
 
 func (s *State) MarshalJSON() ([]byte, error) {

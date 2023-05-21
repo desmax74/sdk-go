@@ -16,6 +16,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -107,4 +108,45 @@ func TestDefaultConditionUnmarshalJSON(t *testing.T) {
 			assert.Equal(t, tc.expect, v)
 		})
 	}
+}
+
+func TestSwitchStateToString(t *testing.T) {
+	single := "2023-03-22T10:00:35+02:00"
+	total := "2023-03-22T10:01:35+02:00"
+	stateExecTimeout := StateExecTimeout{
+		Single: single,
+		Total:  total,
+	}
+
+	timeout := SwitchStateTimeout{
+		StateExecTimeout: &stateExecTimeout,
+	}
+
+	transition := Transition{
+		NextState:     "next",
+		ProduceEvents: []ProduceEvent{},
+		Compensate:    false,
+	}
+
+	end := End{
+		Terminate:     true,
+		Compensate:    false,
+		ProduceEvents: []ProduceEvent{},
+		ContinueAs:    &ContinueAs{},
+	}
+
+	defaultCOndition := DefaultCondition{
+		Transition: &transition,
+		End:        &end,
+	}
+
+	switchState := SwitchState{
+		Timeouts:         &timeout,
+		DefaultCondition: defaultCOndition,
+		EventConditions:  []EventCondition{},
+		DataConditions:   []DataCondition{},
+	}
+	value := fmt.Sprintf("%s", switchState)
+	assert.NotNil(t, value)
+	assert.Equal(t, "{ DataConditions:[], EventConditions:[], DefaultCondition:{ Transition:[next, [], false], End:&{Terminate:true ProduceEvents:[] Compensate:false ContinueAs:{ WorkflowID:, Version:, WorkflowExecTimeout:[, false, ], Data:{ Type:0, IntVal:0, StrVal:, RawValue:[] } }} }, Timeouts:{ StateExecTimeout:{ Single:2023-03-22T10:00:35+02:00, Total:2023-03-22T10:01:35+02:00}, EventTimeout: } }", value)
 }
